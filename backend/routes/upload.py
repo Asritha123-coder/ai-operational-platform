@@ -4,21 +4,22 @@ from storage.tickets_store import save_tickets, clear_tickets
 
 upload_bp = Blueprint("upload", __name__)
 
-@upload_bp.route("/upload-tickets-raw", methods=["POST"])
-def upload_tickets_raw():
-    raw_data = request.data.decode("utf-8")
+@upload_bp.route("/upload-tickets", methods=["POST"])
+def upload_tickets():
+    # 1. Check file exists
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
 
-    if not raw_data:
-        return {"error": "No data received"}, 400
+    file = request.files["file"]
 
-    lines = raw_data.splitlines()
-    tickets = lines[1:]  # skip header
+    # 2. Load tickets from CSV
+    tickets = load_tickets_from_csv(file.stream)
 
+    # 3. Save tickets
     clear_tickets()
     save_tickets(tickets)
 
-    return {
-        "message": "Tickets uploaded via raw data",
+    return jsonify({
+        "message": "Tickets uploaded successfully",
         "count": len(tickets)
-    }
-
+    })
