@@ -1,15 +1,29 @@
-def write_report(analysis, root_causes, anomaly_msg):
-    report = "📊 AI Ops Summary Report\n\n"
+def write_report(analysis, root_causes, anomaly_msg, recommendations):
+    lines = []
 
-    report += "🔹 Issue Breakdown:\n"
+    lines.append("📊 AI Ops Incident Analysis Report")
+    lines.append("=" * 40)
+    lines.append("")
+
+    lines.append("🔹 Issue Breakdown")
     for issue, count in analysis.items():
-        report += f"- {issue}: {count}\n"
+        lines.append(f"- {issue}: {count} incidents")
 
-    report += "\n🔹 Root Cause Analysis:\n"
+    lines.append("")
+    lines.append("🔹 Root Cause Analysis")
     for cause, count in root_causes.items():
-        report += f"- {cause}: {count}\n"
+        lines.append(f"- {cause}: {count} related incidents")
 
-    report += "\n🚨 Anomaly Detection:\n"
-    report += anomaly_msg
+    lines.append("")
+    lines.append("🚨 Anomaly Detection")
+    lines.append(anomaly_msg)
 
-    return report
+    lines.append("")
+    lines.append("🛠️ Recommended Actions")
+    if recommendations:
+        for rec in recommendations:
+            lines.append(f"- {rec}")
+    else:
+        lines.append("No immediate action required")
+
+    return "\n".join(lines)

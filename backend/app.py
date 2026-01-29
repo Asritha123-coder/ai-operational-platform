@@ -5,6 +5,8 @@ from flask_cors import CORS
 # Import blueprints
 from routes.report import report_bp
 from routes.upload import upload_bp
+from routes.metrics import metrics_bp
+
 
 app = Flask(__name__)
 CORS(app)
@@ -12,6 +14,8 @@ CORS(app)
 # Register routes
 app.register_blueprint(report_bp)
 app.register_blueprint(upload_bp)
+app.register_blueprint(metrics_bp)
+
 
 @app.route("/")
 def health_check():

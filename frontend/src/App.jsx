@@ -1,19 +1,34 @@
 import { useState } from "react";
 import { generateReport } from "./api/reportApi";
+import { fetchMetrics } from "./api/metricsApi";
 import ReportView from "./components/ReportView";
+import MetricsCards from "./components/MetricsCards";
+import UploadTickets from "./components/UploadTickets";
 
 function App() {
   const [report, setReport] = useState("");
+  const [metrics, setMetrics] = useState(null);
 
-  const handleClick = async () => {
-    const data = await generateReport();
-    setReport(data.report);
+  const handleGenerate = async () => {
+    const reportData = await generateReport();
+    const metricsData = await fetchMetrics();
+
+    setReport(reportData.report);
+    setMetrics(metricsData);
   };
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>AI Ops Report Generator</h2>
-      <button onClick={handleClick}>Generate Report</button>
+      <h2>AI Ops Dashboard</h2>
+
+      <UploadTickets />
+
+      <button onClick={handleGenerate} style={{ marginTop: "10px" }}>
+        Generate Report
+      </button>
+
+      <MetricsCards metrics={metrics} />
+
       <ReportView report={report} />
     </div>
   );
