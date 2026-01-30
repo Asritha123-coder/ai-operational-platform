@@ -11,6 +11,7 @@ function App() {
   const [report, setReport] = useState("");
   const [metrics, setMetrics] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const [aiReport, setAiReport] = useState("");
 
 
   const handleGenerate = async () => {
@@ -18,6 +19,7 @@ function App() {
     const metricsData = await fetchMetrics();
     //  console.log("RECOMMENDATIONS FROM API:", reportData.recommendations);
     setReport(reportData.report);
+    setAiReport(reportData.ai_report);
     setRecommendations(reportData.recommendations || []);
     setMetrics(metricsData);
   };
@@ -33,6 +35,11 @@ function App() {
       </button>
 
       <MetricsCards metrics={metrics} />
+      <h3>🤖 AI Executive Summary</h3>
+<pre style={{ whiteSpace: "pre-wrap", background: "#f5f5f5", padding: "10px" }}>
+  {aiReport}
+</pre>
+
       <Recommendations items={recommendations}/>
       <ReportView report={report} />
     </div>
