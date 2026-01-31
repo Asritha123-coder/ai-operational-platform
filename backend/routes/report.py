@@ -7,6 +7,9 @@ from services.anomaly_detector import detect_anomaly
 from services.recommendation_engine import generate_recommendations
 from services.ai_writer import write_report
 from services.gemini_writer import generate_ai_report   # ✅ Gemini AI
+from services.department_classifier import classify_by_department
+from services.risk_engine import compute_risk_score, classify_risk
+from services.ai_reasoning import generate_ai_reasoning
 
 report_bp = Blueprint("report", __name__)
 
@@ -23,6 +26,24 @@ def generate_report():
     # 3. Recommendations
     recommendations = generate_recommendations(analysis, root_causes)
 
+    departments = classify_by_department(tickets)
+    risk_score = compute_risk_score(
+    tickets_count=len(tickets),
+    anomaly_detected=is_anomaly,
+    department_count=len(departments)
+    )
+
+    risk_level, priority = classify_risk(risk_score)
+
+    ai_reasoning = generate_ai_reasoning(
+    risk_score,
+    priority,
+    analysis,
+    anomaly_msg,
+    departments
+    )
+    
+    
     # 4. AI report (Gemini)
     ai_report = generate_ai_report(
         analysis,
@@ -38,7 +59,15 @@ def generate_report():
             root_causes,
             anomaly_msg,
             recommendations
+            
+
         ),
         "ai_report": ai_report,
-        "recommendations": recommendations
+        "recommendations": recommendations,
+        "department_breakdown": departments,
+        "risk_score": risk_score,
+        "risk_level": risk_level,
+        "priority": priority,
+        "ai_reasoning": ai_reasoning
+
     })
